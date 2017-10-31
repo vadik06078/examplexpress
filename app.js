@@ -1,16 +1,56 @@
 var express = require('express');
+var http = require("http");
 var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-
-var index = require('./routes/index');
-var users = require('./routes/users');
 
 var app = express();
+app.set('port',3000);
 
+http.createServer(app).listen(app.get('port'),function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});
+
+
+//middleware
+
+app.use(function (req,res,next) {
+  if(req.url =='/'){
+      res.end("Hi");
+  }  else {
+    next();
+  }
+});
+
+
+
+app.use(function (req,res,next) {
+    if(req.url =='/test'){
+        res.end("Hiiiiiii");
+    }  else {
+        next();
+    }
+});
+
+app.use(function (req,res,next) {
+    if(req.url =='/error'){
+        next ( new Error('aaaaaa'));
+    }  else {
+        next();
+    }
+});
+
+app.use(function(req, res){
+  res.send(404, "Page not found");
+});
+
+
+app.use(function (err, req, res, next) {
+    if (app.get('env') == development){
+      app.use(express.errorHandler());
+    }
+});
+/*
 // view engine setup
+app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -44,3 +84,4 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+*/
