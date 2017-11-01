@@ -1,11 +1,111 @@
 var express = require('express');
-const app = express();
+var jwt = require('jsonwebtoken');
+var _ = require("lodash");
+var bodyParser = require("body-parser");
 var jwt = require('jsonwebtoken');
 
+var passport = require('passport');
+var passportJWT = require("passport-jwt");
+
+var ExtractJwt = passportJWT.ExtractJwt;
+var JwtStrategy = passportJWT.Strategy;
+
+
+
+
+const jwtsecret = 'key';
+
+
+var users = [
+    {
+        id:1,
+        name: 'Kate',
+        password: '123'
+    },
+    {
+        id: 2,
+        name: 'Kirill',
+        password: '321'
+    }
+];
+
+var jwtOptions = {}
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+jwtOptions.secretOrKey = "key";
+
+var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next){
+    console.log('payload received', jwt_payload);
+    var user = users[_.findIndex(user, {id: jwt_payload.id})];
+    if (user){
+        next(null, user)
+    } else {
+        next(null, false);
+    }
+});
+
+passport.use(strategy);
+
+const app = express();
+app.use(passport.initialize());
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+app.use(bodyParser.json());
+
+app.get("/", function(req, res){
+    res.json({message: "Express is up!"})
+});
+
+
+app.post("/login", function(req, res){
+    if(req.body.name && req.body.password){
+        var name = req.body.name;
+        var password = req.body.password;
+    }
+
+    var user = users[_.findIndex(user,{name : name})];
+
+    if (!user){
+        res.status(401).json({message: "no user"})
+    }
+
+    if (user.password === req.body.password){
+        var payload = {id: user.id};
+        var token = jwt.sign(payload, jwtOptions.secretOrKey);
+        res.json({message: "ok", token : token});
+    }  else {
+        res.status(401).json({message:"password wrong"});
+    }
+});
+
+
+/*
+var user = {
+    name: 'Kate',
+    password: '123'
+};
+
+app.use(passport.initialize());
+
+passport.use(new LocalStrategy( {
+    username: 'login',
+    password: 'password'
+},
+    function(login, password, done){
+        if ((login === 'Kate') & (password === '123')){
+            console.log('Верные данные');
+        } else {
+            console.log('Ошибка');
+        }
+    }
+)
+
+*/
+
 app.get('/api/jwt', function(req,res){
-   /* res.json({
-        text: 'my api'
-    })*/
+
 
     var user = {name: 'Kate'};
     var token = jwt.sign({ user }, "my_key");  //кодируем
