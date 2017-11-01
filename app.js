@@ -6,9 +6,10 @@ var log = require('libs/log');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
+var jwt = require('jsonwebtoken');
 
 
-var app = express();
+const app = express();
 //app.set('port',config.get('port'));
 
 
@@ -57,11 +58,22 @@ app.use(function(err, req, res, next) {
 });
 
 
-
+//--------JWT-----------
+app.post('/api', function(req, res) {
+    var user = {name: 'Kate'};
+    var token = jwt.sign({ user }, "my_key");
+    res.json({
+        token: token
+    })
+});
 
 http.createServer(app).listen(config.get('port'),function(){
     log.info('Express server listening on port ' + config.get('port'));
 });
+
+
+
+
 /*
 //middleware
 
