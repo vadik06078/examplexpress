@@ -12,7 +12,7 @@ var app = express();
 //app.set('port',config.get('port'));
 
 
-
+app.engine('ejs', require('ejs-locals'));  //файлы ejs надо обрабатывать с помощью 'ejs-local'
 app.set('views', path.join(__dirname, 'templates'));  //настройки для системы шаблонизации
 app.set('view engine', 'ejs');
 
@@ -30,9 +30,10 @@ app.get('/', function(req, res, next){
 
 app.get('/', function(req, res, next){
     res.render("index", {
-        body: '<b>Hiii<b>'
+       // body: '<b>Hiii<b>'
     });
 });
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 
