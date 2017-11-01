@@ -6,12 +6,18 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "body-parser": "~1.18.2",
+    "body-parser": "^1.18.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "ejs": "~2.5.7",
     "express": "~4.15.5",
+    "favicon": "0.0.2",
+    "logger": "0.0.1",
+    "middleware": "^1.0.0",
     "morgan": "~1.9.0",
-    "serve-favicon": "~2.4.5"
+    "nconf": "^0.8.5",
+    "serve-favicon": "~2.4.5",
+    "session": "^0.1.0",
+    "winston": "^2.4.0"
   }
 }
