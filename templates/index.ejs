@@ -1,20 +1,40 @@
 <% layout('/layout/page') %>
-<% block('title', 'Регистрация'); %>
-
-<p class="lead"></p>
+<% block('title', 'Главная'); %>
 
 
+<body style=background-image:url('/home/anton/Downloads/examplexpress/templates/cloud.jpg')>
 
+<form>
+    <table id="zakazTable">
+        <tr>
+            <td>
+                <input type="text" value="" id="login">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" value="" id="password">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="button" value="Зарегистрироваться" onclick="somefunc()">
+                <input type="button" value="Отмена">
+            </td>
+        </tr>
+    </table>
+    </table>
+    <div id="zayavka"></div>
+</form>
+
+<script src="../app.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+
+
    var socket = io.connect();
-   var text = {
-       login: prompt("Write login", ''),
-       Password: prompt("Write password", '')
-   };
    socket.on('news', function (data) {
       console.log(data);
-      socket.emit('my other event', { my: text });
+      socket.emit('my other event', { my: data });
    });
 </script>
-});

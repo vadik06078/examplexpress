@@ -2,7 +2,7 @@ var express = require('express');
 var jwt = require('jsonwebtoken');
 var _ = require("lodash");
 var bodyParser = require("body-parser");
-var jwt = require('jsonwebtoken');
+
 
 var passport = require('passport');
 var passportJWT = require("passport-jwt");
@@ -29,11 +29,7 @@ app.get("/", function(req, res){
 
 app.listen(3000, function(){
     console.log("Express running");
-})
-
-
-
-const jwtsecret = 'key';
+});
 
 
 var users = [
@@ -89,6 +85,9 @@ app.post("/login", function(req, res) {
       res.status(401).json({message:"password wrong"});
   }
 });
+
+
+
 /*
 {
         id:1,

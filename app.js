@@ -42,9 +42,13 @@ app.get('/', function(req, res, next){
     });
 });
 
-app.get('/login', function(req, res, next){
-    res.render("login", {
-        // body: '<b>Hiii<b>'
+app.get('/signin', function(req, res, next){
+    res.render("signin", {
+    });
+});
+
+app.get('/signup', function(req, res, next){
+    res.render("signup", {
     });
 });
 
@@ -93,9 +97,9 @@ io.on('connection', function (socket) {
     });
 });
 
-
+/*
 var user = new User({
-    username: "Test35",
+    username: "Test38",
     password: "secret"
 });
 
@@ -106,7 +110,7 @@ user.save(function (err, user, affected) {
         console.log(tester);
     })
 });
-
+*/
 //--------JWT-----------
 app.post('/', function(req, res) {
     var user = {name: 'Kate'};
@@ -118,6 +122,24 @@ app.post('/', function(req, res) {
     var l = jwt.decode(token);  //декодируем
     console.log(l);
 });
+
+
+function somefunc(){
+    var name = document.getElementById("login").value;
+    var password = document.getElementById("password").value;
+    alert(name + "    " +password);
+}
+
+
+
+
+
+
+
+
+
+
+
 /*
 //middleware
 
