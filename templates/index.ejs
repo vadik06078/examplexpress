@@ -1,4 +1,20 @@
 <% layout('/layout/page') %>
-<% block('title', 'Привееет'); %>
+<% block('title', 'Регистрация'); %>
 
-<p class="lead">Всем Приветик</p>
+<p class="lead"></p>
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+   var socket = io.connect();
+   var text = {
+       login: prompt("Write login", ''),
+       Password: prompt("Write password", '')
+   };
+   socket.on('news', function (data) {
+      console.log(data);
+      socket.emit('my other event', { my: text });
+   });
+</script>
+});

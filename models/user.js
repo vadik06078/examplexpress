@@ -1,4 +1,5 @@
 var crypto = require('crypto');
+var jwt = require('jsonwebtoken');
 
 var mongoose = require('libs/mongoose'),
     Schema = mongoose.Schema;
@@ -6,13 +7,14 @@ var mongoose = require('libs/mongoose'),
 var schema = new Schema({
     username: {
         type: String,
-        unique: true,
+       // unique: true,
         required: true
     },
     hashedPassword:{
         type: String,
         required: true
     },
+
     salt: {
         type: String,
         required: true
@@ -22,6 +24,7 @@ var schema = new Schema({
         default: Date.now
     }
 });
+
 
 schema.methods.encryptPassword = function(password) {
     return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
@@ -35,8 +38,14 @@ schema.virtual('password')
 })
 .get(function () { return this._plainPassword; });
 
+
+
+
+
 schema.methods.checkPassword = function(password) {
     return this.encryptPassword((password) === this.hashedPassword)
 };
+
+
 
 exports.User = mongoose.model('User',schema);

@@ -11,6 +11,26 @@ var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 
 
+var app = express();
+
+app.use(passport.initialize());
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+app.use(bodyParser.json());
+
+
+
+app.get("/", function(req, res){
+    res.json({message: "Express is up!"})
+});
+
+app.listen(3000, function(){
+    console.log("Express running");
+})
+
 
 
 const jwtsecret = 'key';
@@ -36,6 +56,7 @@ jwtOptions.secretOrKey = "key";
 var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next){
     console.log('payload received', jwt_payload);
     var user = users[_.findIndex(user, {id: jwt_payload.id})];
+    console.log(user);
     if (user){
         next(null, user)
     } else {
@@ -45,42 +66,73 @@ var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next){
 
 passport.use(strategy);
 
+app.post("/login", function(req, res) {
+    if (req.body.name && req.body.password) {
+        var name = req.body.name;
+        var password = req.body.password;
+        console.log(req.body.name);
+    }
+
+    var user = users[_.findIndex(users, {name: name})];
+    console.log(user);
+
+    if (!user) {
+        res.status(401).json({message: "no user"});
+    }
+
+
+      if (user.password === req.body.password){
+      var payload = {id: user.id};
+      var token = jwt.sign(payload, jwtOptions.secretOrKey);
+      res.json({message: "ok", token : token});
+  }  else {
+      res.status(401).json({message:"password wrong"});
+  }
+});
+/*
+{
+        id:1,
+        name: 'Kate',
+        password: '123'
+    };
+
+
 const app = express();
 app.use(passport.initialize());
 
 app.use(bodyParser.urlencoded({
-    extended: true
+  extended: true
 }));
 
 app.use(bodyParser.json());
 
 app.get("/", function(req, res){
-    res.json({message: "Express is up!"})
+  res.json({message: "Express is up!"})
 });
 
 
 app.post("/login", function(req, res){
-    if(req.body.name && req.body.password){
-        var name = req.body.name;
-        var password = req.body.password;
-    }
+  if(req.body.name && req.body.password){
+      var name = req.body.name;
+      var password = req.body.password;
+  }
 
-    var user = users[_.findIndex(user,{name : name})];
+  var user = users[_.findIndex(user,{name : name})];
 
-    if (!user){
-        res.status(401).json({message: "no user"})
-    }
+  if (!user){
+      res.status(401).json({message: "no user"})
+  }
 
-    if (user.password === req.body.password){
-        var payload = {id: user.id};
-        var token = jwt.sign(payload, jwtOptions.secretOrKey);
-        res.json({message: "ok", token : token});
-    }  else {
-        res.status(401).json({message:"password wrong"});
-    }
+/*     if (user.password === req.body.password){
+      var payload = {id: user.id};
+      var token = jwt.sign(payload, jwtOptions.secretOrKey);
+      res.json({message: "ok", token : token});
+  }  else {
+      res.status(401).json({message:"password wrong"});
+  }
 });
 
-
+*/
 /*
 var user = {
     name: 'Kate',
@@ -104,6 +156,10 @@ passport.use(new LocalStrategy( {
 
 */
 
+
+
+
+/*
 app.get('/api/jwt', function(req,res){
 
 
@@ -121,4 +177,4 @@ app.get('/api/jwt', function(req,res){
 
 app.listen(3000, function (){
     console.log('App listening on port 3000!')
-});
+});*/
