@@ -1,0 +1,13 @@
+{
+  "port": 3000,
+  "mongoose": {
+    "uri": "mongodb://admin:admin@ds245805.mlab.com:45805/examplexpresss",
+    "options": {
+      "server": {
+        "socketOptions": {
+          "keepAlive": 1
+        }
+      }
+    }
+  }
+}
