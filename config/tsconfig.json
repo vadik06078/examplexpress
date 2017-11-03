@@ -1,7 +1,7 @@
 {
   "port": 3000,
   "mongoose": {
-    "uri": "mongodb://localhost/examplexpress",
+    "uri": "mongodb://localhost/examplexpresss",
     "options": {
       "server": {
         "socketOptions": {

@@ -4,39 +4,53 @@
 <p class="lead"></p>
 
 
+<form>
+    <table id="zakazTable">
+        <tr>
+            <td>
+                <input type="text" value="" id="login">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="password" value="" id="password">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="button" value="Зарегистрироваться" onclick="somefunc()">
+                <input type="button" value="Отмена" onclick="clear()">
+            </td>
+        </tr>
+    </table>
+    </table>
+    <div id="zayavka"></div>
+</form>
+
+
 <script src="/socket.io/socket.io.js"></script>
-
-<div id="room">
-    <ul></ul>
-    <form>
-        <input class="form-control" autocomplete="off" autofocus placeholder="Логин">
-        <input class="form-control" autocomplete="off" autofocus placeholder="Пароль">
-        <p><input type="submit"></p>
-        <p><input type="submit"></p>
-    </form>
-</div>
-
 <script>
+
+    function somefunc(){
+        var name = document.getElementById("login").value;
+        var password = document.getElementById("password").value;
+        var profile = name + '/' + password;
+        profile = profile.split('/');
+        socket.emit('my other event',  profile );
+
+    }
+
+    function clear(){
+        ocument.getElementById("login").value = "";
+        ocument.getElementById("password").value = "";
+    }
+
     var socket = io.connect();
 
-    var form = $('#room form');
-    var ul = $('#room ul');
-
-    form.submit(function(){
-        var input = $(this).find(':input');
-        var text = input.val();
-        input.val('');
-
-        socket.emit('message', text, function (data) {
-            console.log(data);
-            $('<li>', {text: text}).append(ul);
-        });
-
-        return false;
-    })
 
 
-    socket.on('message', function (text) {
-        $('<li>', {text: text}).append(ul);
+    socket.on('news', function (data) {
+        console.log(data);
+        //  socket.emit('my other event', { my: name });
     });
 </script>

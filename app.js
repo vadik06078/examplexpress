@@ -1,5 +1,7 @@
 var express = require('express');
-var router = require('router')
+var router = require('router');
+var Emitter = require("events");
+var emitter = new Emitter();
 var app = express();
 var http = require("http");
 var path = require('path');
@@ -15,6 +17,16 @@ var passport = require('passport');
 var localStrategy = require('passport-local');
 var jwtStrategy = require('passport-jwt');
 var extractJwt = require('passport-jwt');
+
+
+var _ = require("lodash");
+var passportJWT = require("passport-jwt");
+
+var ExtractJwt = passportJWT.ExtractJwt;
+var JwtStrategy = passportJWT.Strategy;
+
+
+
 
 app.use(passport.initialize());
 
@@ -42,6 +54,12 @@ app.get('/', function(req, res, next){
     });
 });
 
+
+app.post('/signin', (req, res, next) => {
+    console.log(req);
+});
+
+
 app.get('/signin', function(req, res, next){
     res.render("signin", {
     });
@@ -50,6 +68,7 @@ app.get('/signin', function(req, res, next){
 app.get('/signup', function(req, res, next){
     res.render("signup", {
     });
+
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -72,6 +91,12 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+app.post("/hello",function(req, res) {
+    if (req.body.name == "hi") {
+        console.log(req.body.name);
+    }
+});
 //******************************************
 
 
@@ -86,32 +111,178 @@ server.listen(config.get('port'),function(){
 
 var io = require('socket.io')(server);
 
+var user = new User({
+    username: ' ',
+    password: ' '
+});
+
+
+
 io.on('connection', function (socket) {
     socket.emit('news', { hello: 'world' });  //передаёт
     socket.on('my other event', function (data) {   //слушает
-        console.log(data);
+        var q = data;
+        console.log(q);
+        var user = new User({
+            username: q[0],
+            password: q[1]
+        });
+
+        user.save(function (err, user, affected) {
+            if (err) throw err;
+        });
+
+        console.log(user);
     });
-    socket.on('message', function (text, cb) {   //слушает
+
+
+
+    socket.on('loginuser', function (data) {   //слушает
+        User.findOne({username: data[0]}, function (err, tester) {
+            console.log(tester);
+        })
+
+            var user = data
+            var token = jwt.sign( { user }, "my_key");  //кодируем
+           /* res.json({
+                token: token
+            })*/
+            console.log(token);
+            var l = jwt.decode(token);  //декодируем
+            console.log(l);
+
+         //  emitter.emit("request");
+
+    });
+/*
+    emitter.on('request', function(req,res){
+        res.cookie("qwerty");
+        console.log('i am here');
+    });
+*/
+/*
+
+// создаем парсер для данных application/x-www-form-urlencoded
+    var urlencodedParser = bodyParser.urlencoded({extended: false});
+
+    app.use(express.static(__dirname + "/public"));
+
+    app.post("/signin", urlencodedParser, function (request, response) {
+        if(!request.body) return response.sendStatus(400);
+        console.log(request.body);
+        response.send(`${request.body.userName} - ${request.body.userAge}`);
+    });
+
+    app.get("/", function(request, response){
+
+        response.send("<h1>Главная страница</h1>");
+    });
+/*
+    app.use(passport.initialize());
+
+    app.use(bodyParser.urlencoded({
+        extended: true
+    }));
+
+    app.use(bodyParser.json());
+
+
+
+
+    var users = [
+        {
+            id:1,
+            name: 'Kate',
+            password: '123'
+        },
+        {
+            id: 2,
+            name: 'Kirill',
+            password: '321'
+        }
+    ];
+
+    var jwtOptions = {}
+    jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+    jwtOptions.secretOrKey = "key";
+
+    var strategy = new JwtStrategy(jwtOptions, function(jwt_payload, next){
+        console.log('payload received', jwt_payload);
+        var user = users[_.findIndex(user, {id: jwt_payload.id})];
+        console.log(user);
+        if (user){
+            next(null, user)
+        } else {
+            next(null, false);
+        }
+    });
+
+    passport.use(strategy);
+
+    var urlencodedParser = bodyParser.urlencoded({extended: false});
+
+    app.post("/signin", urlencodedParser, function(req, res) {
+        if (req.body.name && req.body.password) {
+            var name = req.body.name;
+            var password = req.body.password;
+            console.log(req.body.name);
+        }
+
+        var user = users[_.findIndex(users, {name: name})];
+        console.log(user);
+
+        if (!user) {
+            res.status(401).json({message: "no user"});
+            console.log("no user");
+        }
+
+
+        if (user.password === req.body.password){
+            var payload = {id: user.id};
+            var token = jwt.sign(payload, jwtOptions.secretOrKey);
+            res.json({message: "ok", token : token});
+        }  else {
+            res.status(401).json({message:"password wrong"});
+        }
+    });
+
+
+   /* socket.on('message', function (text, cb) {   //слушает
         socket.broadcast.emit('message', text);
         cb(text);
-    });
+    });*/
 });
+
+
+
+
+
 
 /*
-var user = new User({
-    username: "Test38",
-    password: "secret"
+
+// создаем парсер для данных application/x-www-form-urlencoded
+var urlencodedParser = bodyParser.urlencoded({extended: false});
+
+app.use(express.static(__dirname + "/public"));
+
+app.post("/", urlencodedParser, function (request, response) {
+    if(!request.body) return response.sendStatus(400);
+    console.log(request.body);
+    response.send(`${request.body.userName} - ${request.body.userAge}`);
 });
 
-user.save(function (err, user, affected) {
-    if (err) throw err;
+app.get("/", function(request, response){
 
-    User.findOne({username: "Test30"}, function(err, tester){
-        console.log(tester);
-    })
+    response.send("<h1>Главная страница</h1>");
 });
+
+
 */
+
+
+
 //--------JWT-----------
+/*
 app.post('/', function(req, res) {
     var user = {name: 'Kate'};
     var token = jwt.sign({ user }, "my_key");
@@ -123,12 +294,8 @@ app.post('/', function(req, res) {
     console.log(l);
 });
 
+*/
 
-function somefunc(){
-    var name = document.getElementById("login").value;
-    var password = document.getElementById("password").value;
-    alert(name + "    " +password);
-}
 
 
 

@@ -4,6 +4,21 @@
 
 <body style=background-image:url('/home/anton/Downloads/examplexpress/templates/cloud.jpg')>
 
+
+
+<!--
+<body>
+<h1>Введите данные</h1>
+<form action="/signin" method="post">
+    <label>Имя</label><br>
+    <input type="text" name="userName" /><br><br>
+    <label>Возраст</label><br>
+    <input type="number" name="userAge" /><br><br>
+    <input type="submit" value="Отправить" />
+</form>
+</body>
+-->
+<!--
 <form>
     <table id="zakazTable">
         <tr>
@@ -27,14 +42,28 @@
     <div id="zayavka"></div>
 </form>
 
-<script src="../app.js"></script>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
+    function somefunc(){
+        var name = document.getElementById("login").value;
+        var password = document.getElementById("password").value;
+        var profile = name + '/' + password;
+        profile = profile.split('/');
+        socket.emit('my other event',  profile );
+
+    }
 
    var socket = io.connect();
+
+
+
    socket.on('news', function (data) {
       console.log(data);
-      socket.emit('my other event', { my: data });
+    //  socket.emit('my other event', { my: name });
    });
 </script>
+
+
+-->
