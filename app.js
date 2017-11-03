@@ -26,7 +26,6 @@ var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 
 
-//////////////////////////
 
 
 app.use(passport.initialize());
